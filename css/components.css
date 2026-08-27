@@ -1,0 +1,314 @@
+/* ==========================================================================
+   Components — buttons, product cards, brand strip, form, badges
+   ========================================================================== */
+
+/* ---- Buttons ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  padding: 0.9rem 2rem;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--color-white);
+  color: var(--color-white);
+}
+
+.btn-outline:hover,
+.btn-outline:focus-visible {
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus-visible {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+/* ---- Product grid & card ---- */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-lg) var(--space-md);
+}
+
+.product-grid--single {
+  max-width: 320px;
+  margin-inline: auto;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform var(--transition-base);
+}
+
+.product-card:hover {
+  transform: scale(1.06);
+  z-index: 2;
+}
+
+.product-card__image-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background-color: var(--color-section-light);
+}
+
+.product-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-card__badge {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius);
+}
+
+.product-card__body {
+  padding-top: var(--space-sm);
+}
+
+.product-card__category {
+  font-size: var(--fs-small);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.product-card__name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  margin-bottom: 0.3rem;
+}
+
+.product-card__price {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* ---- Brand strip ---- */
+
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.brand-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-lg) var(--space-md);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  position: relative;
+  transition: border-color var(--transition-fast), transform var(--transition-base);
+}
+
+.brand-card:hover,
+.brand-card:focus-visible {
+  border-color: var(--color-primary);
+  transform: scale(1.08);
+  z-index: 2;
+}
+
+.brand-card__name {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-pink-text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---- Social Code of Conduct page ---- */
+
+.conduct-body {
+  max-width: 700px;
+  margin-inline: auto;
+}
+
+.conduct-block {
+  margin-bottom: var(--space-xl);
+}
+
+.conduct-block h2 {
+  font-size: var(--fs-h3);
+  margin-bottom: var(--space-sm);
+}
+
+.conduct-block p {
+  margin-bottom: var(--space-sm);
+}
+
+.conduct-list {
+  list-style: disc;
+  padding-left: 1.4em;
+  margin-bottom: var(--space-sm);
+}
+
+.conduct-list li {
+  margin-bottom: var(--space-2xs);
+  color: var(--color-text-muted);
+}
+
+.conduct-list--nested {
+  list-style: circle;
+  margin-top: var(--space-2xs);
+  margin-bottom: 0;
+}
+
+.brands-disclaimer {
+  margin-top: var(--space-lg);
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---- Contact form ---- */
+
+.contact-layout {
+  display: grid;
+  gap: var(--space-xl);
+  grid-template-columns: 1fr;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.contact-info__item dt {
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.contact-info__note {
+  display: block;
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+}
+
+.contact-info__item dd {
+  font-size: 1.05rem;
+  color: var(--color-text);
+}
+
+.form-field {
+  margin-bottom: var(--space-md);
+}
+
+.form-field label {
+  display: block;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-2xs);
+  color: var(--color-text);
+}
+
+.form-field .required {
+  color: var(--color-primary);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-white);
+  color: var(--color-text);
+  transition: border-color var(--transition-fast);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.form-field input[aria-invalid="true"],
+.form-field textarea[aria-invalid="true"] {
+  border-color: #b3261e;
+}
+
+.form-field__error {
+  display: block;
+  color: #b3261e;
+  font-size: var(--fs-small);
+  margin-top: 0.35rem;
+}
+
+.form-status {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.form-status--success {
+  background-color: var(--color-section-light);
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-primary);
+}
+
+.form-status--hidden {
+  display: none;
+}

@@ -1,0 +1,53 @@
+/* ==========================================================================
+   Design tokens — colors, type, spacing, breakpoints
+   Breakpoints are documented here as comments; actual @media rules live in
+   responsive.css since CSS custom properties cannot be used inside
+   @media (min-width) conditions.
+   base:  <480px   sm: 480–767px   md: 768–991px   lg: >=992px
+   ========================================================================== */
+
+:root {
+  /* Brand palette */
+  --color-primary: #2d6a4f;        /* deep forest green — nav, buttons, headings, fills */
+  --color-primary-dark: #1f4d39;   /* pressed/hover state for solid primary fills */
+  --color-accent: #52b788;         /* sage green — non-text accents, icon fills, focus rings */
+  --color-section-light: #f0f7f4;  /* pale sage — light section backgrounds */
+  --color-bg: #faf9f5;             /* warm off-white — base page background */
+
+  --color-text: #1c2b24;           /* near-black green-tinted text for max readability */
+  --color-text-muted: #55665c;
+  --color-border: #dde6e0;
+  --color-white: #ffffff;
+
+  --color-header-bg: #f4c2c2;      /* soft blush pink — header background */
+  --color-pink-text: #831843;      /* deep rose pink — readable on blush header and on light sections */
+
+  /* Type */
+  --font-heading: "Cormorant Garamond", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --fs-h1: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+  --fs-h2: clamp(1.9rem, 3vw + 1rem, 2.75rem);
+  --fs-h3: clamp(1.1rem, 1vw + 0.8rem, 1.35rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-brand-name: clamp(1rem, 0.85rem + 0.6vw, 1.75rem);
+
+  /* Spacing scale */
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+
+  /* Layout */
+  --container-max: 1280px;
+  --radius: 4px;
+  --header-height: 92px;
+
+  /* Motion */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}
