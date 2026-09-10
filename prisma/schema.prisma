@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Category {
+  CLOTHING
+  SHOES
+  BAGS
+  FRAGRANCE
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  FULFILLED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+model Product {
+  id          String         @id @default(cuid())
+  name        String
+  slug        String         @unique
+  description String
+  price       Decimal        @db.Decimal(10, 2)
+  category    Category
+  // Single source of truth for stock. "In stock" / "out of stock" is ALWAYS
+  // derived from this (quantity > 0) in application code — never stored as
+  // a separate flag, so it can never drift out of sync.
+  quantity    Int            @default(0)
+  badge       String?
+  images      ProductImage[]
+  orderItems  OrderItem[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([category])
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  customerName    String
+  customerPhone   String?
+  customerEmail   String?
+  deliveryAddress String
+  notes           String?
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(UNPAID)
+  // Sum of line items at creation time. Always re-derivable from OrderItem
+  // as a sanity check; never mutated after creation.
+  totalAtOrder    Decimal       @db.Decimal(10, 2)
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model OrderItem {
+  id                  String   @id @default(cuid())
+  orderId             String
+  order               Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  // Nullable + SetNull so an order's history survives the product being
+  // edited or deleted later.
+  productId           String?
+  product             Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productNameAtOrder  String
+  productImageAtOrder String?
+  // NEVER re-read the live Product.price for historical orders — prices
+  // change, this snapshot is what the customer actually agreed to.
+  unitPriceAtOrder    Decimal  @db.Decimal(10, 2)
+  quantity            Int
+
+  @@index([orderId])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  createdAt DateTime @default(now())
+}
