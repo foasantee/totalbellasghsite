@@ -26,9 +26,13 @@ export function ImageUploader({ initialImages = [] }: { initialImages?: string[]
       if (!presignResponse.ok) throw new Error("Could not get an upload URL.");
       const { uploadUrl, publicUrl } = await presignResponse.json();
 
+      // The presigned URL embeds x-amz-acl=public-read as a signed query
+      // parameter, but DigitalOcean Spaces only actually grants public-read
+      // if the header is also present on the request itself — the query
+      // parameter alone is silently ignored. Confirmed by direct testing.
       const putResponse = await fetch(uploadUrl, {
         method: "PUT",
-        headers: { "Content-Type": file.type },
+        headers: { "Content-Type": file.type, "x-amz-acl": "public-read" },
         body: file,
       });
       if (!putResponse.ok) throw new Error("Upload to storage failed.");
