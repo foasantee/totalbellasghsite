@@ -57,12 +57,13 @@ export async function sendOrderNotification(order: OrderWithItems): Promise<void
     <p><a href="${getSiteUrl()}/admin/orders/${order.id}">View this order in the admin panel</a></p>
   `;
 
-  await resend.emails.send({
-    from: "Total Bellas GH <orders@totalbellasgh.com>",
+  const { error } = await resend.emails.send({
+    from: "Total Bellas GH <shop@totalbellasgh.com>",
     to: getOwnerEmail(),
     subject: `New order from ${order.customerName} — ${formatPrice(order.totalAtOrder)}`,
     html,
   });
+  if (error) throw new Error(`Resend rejected order notification: ${error.message}`);
 }
 
 export async function sendContactMessage(message: ContactMessage): Promise<void> {
@@ -72,8 +73,8 @@ export async function sendContactMessage(message: ContactMessage): Promise<void>
     return;
   }
 
-  await resend.emails.send({
-    from: "Total Bellas GH <contact@totalbellasgh.com>",
+  const { error } = await resend.emails.send({
+    from: "Total Bellas GH <shop@totalbellasgh.com>",
     to: getOwnerEmail(),
     replyTo: message.email,
     subject: `New contact message from ${message.name}`,
@@ -84,4 +85,5 @@ export async function sendContactMessage(message: ContactMessage): Promise<void>
       <p>${message.message.replace(/\n/g, "<br/>")}</p>
     `,
   });
+  if (error) throw new Error(`Resend rejected contact message: ${error.message}`);
 }
