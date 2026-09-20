@@ -10,8 +10,7 @@ const nextConfig: NextConfig = {
       ...(spacesHostname
         ? [{ protocol: "https" as const, hostname: spacesHostname }]
         : []),
-      { protocol: "https" as const, hostname: "*.digitaloceanspaces.com" },
-      { protocol: "https" as const, hostname: "*.cdn.digitaloceanspaces.com" },
+      { protocol: "https" as const, hostname: "**.digitaloceanspaces.com" },
     ],
   },
 };
