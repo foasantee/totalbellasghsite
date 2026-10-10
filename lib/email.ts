@@ -30,11 +30,27 @@ export async function sendOrderNotification(order: OrderWithItems): Promise<void
     return;
   }
 
+  const orderRef = order.id.slice(-8).toUpperCase();
+
+  // Product images for the original seeded catalog are relative paths
+  // (e.g. "/products/x.jpeg", served from this app's own /public folder) —
+  // fine on the website itself, but meaningless in an email with no "current
+  // site" to resolve against. Images uploaded via the admin panel (Spaces)
+  // are already absolute and pass through unchanged.
+  const toAbsoluteUrl = (url: string) => (url.startsWith("/") ? `${getSiteUrl()}${url}` : url);
+
   const itemRows = order.items
     .map(
       (item) =>
         `<tr>
-          <td style="padding:4px 8px;">${item.productNameAtOrder}</td>
+          <td style="padding:4px 8px;">
+            ${
+              item.productImageAtOrder
+                ? `<img src="${toAbsoluteUrl(item.productImageAtOrder)}" alt="" width="48" height="60" style="object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:8px;" />`
+                : ""
+            }
+            <span style="vertical-align:middle;">${item.productNameAtOrder}</span>
+          </td>
           <td style="padding:4px 8px;">${item.quantity}</td>
           <td style="padding:4px 8px;">${formatPrice(item.unitPriceAtOrder)}</td>
         </tr>`
@@ -42,7 +58,7 @@ export async function sendOrderNotification(order: OrderWithItems): Promise<void
     .join("");
 
   const html = `
-    <h2>New order from ${order.customerName}</h2>
+    <h2>New order #${orderRef} from ${order.customerName}</h2>
     <p><strong>Total: ${formatPrice(order.totalAtOrder)}</strong></p>
     <table style="border-collapse:collapse;">
       <thead><tr><th align="left">Item</th><th align="left">Qty</th><th align="left">Price</th></tr></thead>
@@ -54,13 +70,13 @@ export async function sendOrderNotification(order: OrderWithItems): Promise<void
       Delivery address: ${order.deliveryAddress}<br/>
       Notes: ${order.notes || "—"}
     </p>
-    <p><a href="${getSiteUrl()}/admin/orders/${order.id}">View this order in the admin panel</a></p>
+    <p><a href="${getSiteUrl()}/admin/orders/${order.id}">View order #${orderRef} in the admin panel</a></p>
   `;
 
   const { error } = await resend.emails.send({
     from: "Total Bellas GH <shop@totalbellasgh.com>",
     to: getOwnerEmail(),
-    subject: `New order from ${order.customerName} — ${formatPrice(order.totalAtOrder)}`,
+    subject: `New order #${orderRef} from ${order.customerName} — ${formatPrice(order.totalAtOrder)}`,
     html,
   });
   if (error) throw new Error(`Resend rejected order notification: ${error.message}`);
