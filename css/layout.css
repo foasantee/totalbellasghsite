@@ -52,7 +52,7 @@
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: var(--fs-brand-name);
-  color: var(--color-pink-text);
+  color: var(--color-header-text);
   letter-spacing: 0.04em;
   line-height: 1;
   white-space: nowrap;
@@ -65,7 +65,7 @@
 }
 
 .primary-nav__link {
-  color: var(--color-pink-text);
+  color: var(--color-header-text);
   font-size: var(--fs-small);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -75,8 +75,8 @@
 .primary-nav__link:hover,
 .primary-nav__link:focus-visible,
 .primary-nav__link.is-active {
-  color: var(--color-pink-text);
-  text-decoration-color: var(--color-pink-text);
+  color: var(--color-header-text);
+  text-decoration-color: var(--color-header-text);
   text-decoration-line: underline;
 }
 
@@ -91,7 +91,7 @@
   display: block;
   width: 26px;
   height: 2px;
-  background-color: var(--color-pink-text);
+  background-color: var(--color-header-text);
   margin: 5px 0;
   transition: transform var(--transition-fast), opacity var(--transition-fast);
 }

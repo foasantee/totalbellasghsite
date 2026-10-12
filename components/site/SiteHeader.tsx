@@ -11,8 +11,8 @@ export function SiteHeader() {
             className="site-logo__image"
             src="/logo/total-bellas-logo-header.png"
             alt=""
-            width={1162}
-            height={965}
+            width={800}
+            height={521}
             priority
           />
           <span className="site-logo__text">Total Bellas GH</span>

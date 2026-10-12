@@ -19,8 +19,9 @@
   --color-border: #dde6e0;
   --color-white: #ffffff;
 
-  --color-header-bg: #f4c2c2;      /* soft blush pink — header background */
-  --color-pink-text: #831843;      /* deep rose pink — readable on blush header and on light sections */
+  --color-header-bg: #f6f5f1;      /* soft cream — header background, matches the new logo's own backdrop */
+  --color-header-text: #6b3a36;    /* deep terracotta — header/nav text, from the new logo's line art, darkened for contrast on cream */
+  --color-pink-text: #831843;      /* deep rose pink — used for headings sitewide (unchanged by the new logo for now) */
 
   /* Type */
   --font-heading: "Cormorant Garamond", "Georgia", serif;
