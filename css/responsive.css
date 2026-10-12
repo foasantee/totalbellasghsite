@@ -24,18 +24,8 @@
     grid-template-columns: 1fr 1.3fr;
   }
 
-  .hero {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .hero__content {
-    order: 1;
     padding: var(--space-2xl) var(--space-xl);
-  }
-
-  .hero__media {
-    order: 2;
-    height: auto;
   }
 }
 

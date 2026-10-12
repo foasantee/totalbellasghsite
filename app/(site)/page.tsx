@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getProductsByCategory, toCardData } from "@/lib/products";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -22,15 +21,6 @@ export default async function HomePage() {
   return (
     <>
       <section id="order" className="hero" aria-labelledby="order-heading">
-        <div className="hero__media">
-          <Image
-            src="/hero/hero-image.png"
-            alt="Two women walking together in the city, one in a pink blazer with jeans carrying an orange bag, the other in a black dress carrying a black handbag"
-            width={1024}
-            height={1536}
-            priority
-          />
-        </div>
         <div className="hero__content">
           <p className="hero__eyebrow">New Season Edit</p>
           <h1 id="order-heading" className="hero__title">
