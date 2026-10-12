@@ -6,6 +6,8 @@ import type { Category } from "@prisma/client";
  * for content that changes a few times a year at most.
  */
 
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 export const SITE_CONTACT = {
   location: "Accra, Ghana",
   phoneDisplay: "+233 24 451 8651",

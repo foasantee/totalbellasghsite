@@ -1,19 +1,39 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/site-config";
 import "@/css/variables.css";
 import "@/css/base.css";
 import "@/css/layout.css";
 import "@/css/components.css";
 import "@/css/responsive.css";
 
+const title = "Total Bellas GH — Curated Fashion, Footwear & Bags";
+const description =
+  "Total Bellas GH — curated clothing, shoes and bags for the modern Ghanaian woman. Shop the new season edit.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Total Bellas GH — Curated Fashion, Footwear & Bags",
+    default: title,
     template: "%s — Total Bellas GH",
   },
-  description:
-    "Total Bellas GH — curated clothing, shoes and bags for the modern Ghanaian woman. Shop the new season edit.",
+  description,
   icons: {
     icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%232D6A4F'/%3E%3Ctext x='50' y='68' font-family='Georgia,serif' font-size='58' fill='%23FAF9F5' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E",
+  },
+  openGraph: {
+    title,
+    description,
+    url: SITE_URL,
+    siteName: "Total Bellas GH",
+    images: ["/hero/hero-image.png"],
+    locale: "en_GH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/hero/hero-image.png"],
   },
 };
 
