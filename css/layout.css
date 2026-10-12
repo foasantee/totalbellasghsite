@@ -48,12 +48,28 @@
   width: auto;
 }
 
+.site-logo__text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
 .site-logo__text {
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: var(--fs-brand-name);
   color: var(--color-header-text);
   letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.site-logo__tagline {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: var(--color-header-text);
+  opacity: 0.75;
+  letter-spacing: 0.02em;
   line-height: 1;
   white-space: nowrap;
 }

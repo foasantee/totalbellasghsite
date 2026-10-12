@@ -15,7 +15,10 @@ export function SiteHeader() {
             height={521}
             priority
           />
-          <span className="site-logo__text">Total Bellas GH</span>
+          <span className="site-logo__text-group">
+            <span className="site-logo__text">Total Bellas GH</span>
+            <span className="site-logo__tagline">wear your best moments</span>
+          </span>
         </Link>
 
         <PrimaryNav />
