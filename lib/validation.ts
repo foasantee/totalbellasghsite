@@ -73,6 +73,18 @@ export const productSizeInputSchema = z.object({
   quantity: z.coerce.number().int().min(0, "Size quantity cannot be negative."),
 });
 
+// Most images are absolute Spaces URLs from the uploader, but some older
+// seeded products still use a site-relative path (e.g. "/products/x.jpeg",
+// served from this app's own /public folder) — z.string().url() rejects
+// those outright, which broke saving any product that still has one.
+const imageRefSchema = z
+  .string()
+  .min(1)
+  .refine(
+    (value) => value.startsWith("/") || z.string().url().safeParse(value).success,
+    { message: "Invalid image." }
+  );
+
 export const productFormSchema = z.object({
   name: z.string().trim().min(1, "Product name is required."),
   description: z.string().trim().optional().or(z.literal("")),
@@ -80,7 +92,7 @@ export const productFormSchema = z.object({
   category: z.enum(["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"]),
   quantity: z.coerce.number().int().min(0, "Quantity cannot be negative."),
   badge: z.string().trim().optional().or(z.literal("")),
-  images: z.array(z.string().url()).default([]),
+  images: z.array(imageRefSchema).default([]),
   // Only meaningful for CLOTHING. Empty array = this product isn't using
   // per-size stock — the plain `quantity` field above stays authoritative.
   sizes: z.array(productSizeInputSchema).default([]),
