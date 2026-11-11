@@ -60,9 +60,17 @@ export const SIZE_LABELS: Record<Size, string> = {
   SIZE_14: "14",
   SIZE_16: "16",
   SIZE_18: "18",
+  SHOE_4_37: "4 / 37",
+  SHOE_5_38: "5 / 38",
+  SHOE_6_39: "6 / 39",
+  SHOE_7_40: "7 / 40",
+  SHOE_8_41: "8 / 41",
+  SHOE_9_42: "9 / 42",
+  SHOE_10_43: "10 / 43",
+  SHOE_11_44: "11 / 44",
 };
 
-export const SIZE_ORDER: Size[] = [
+export const CLOTHING_SIZE_ORDER: Size[] = [
   "S",
   "M",
   "L",
@@ -75,3 +83,28 @@ export const SIZE_ORDER: Size[] = [
   "SIZE_16",
   "SIZE_18",
 ];
+
+export const SHOE_SIZE_ORDER: Size[] = [
+  "SHOE_4_37",
+  "SHOE_5_38",
+  "SHOE_6_39",
+  "SHOE_7_40",
+  "SHOE_8_41",
+  "SHOE_9_42",
+  "SHOE_10_43",
+  "SHOE_11_44",
+];
+
+// All sizes usable by any category — for parsing form submissions without
+// needing to know which category's grid was rendered.
+export const ALL_SIZES: Size[] = [...CLOTHING_SIZE_ORDER, ...SHOE_SIZE_ORDER];
+
+const SIZE_ORDER_BY_CATEGORY: Partial<Record<Category, Size[]>> = {
+  CLOTHING: CLOTHING_SIZE_ORDER,
+  SHOES: SHOE_SIZE_ORDER,
+};
+
+/** Sizes offered for a category's admin/storefront size picker — empty for categories that don't use sizes. */
+export function sizesForCategory(category: Category): Size[] {
+  return SIZE_ORDER_BY_CATEGORY[category] ?? [];
+}

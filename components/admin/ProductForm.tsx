@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { ImageUploader } from "./ImageUploader";
 import type { ProductFormState } from "@/actions/products";
-import { CATEGORY_LABELS, SIZE_LABELS, SIZE_ORDER } from "@/lib/site-config";
+import { CATEGORY_LABELS, SIZE_LABELS, sizesForCategory } from "@/lib/site-config";
 import type { Category, Size } from "@prisma/client";
 
 const CATEGORIES: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"];
@@ -31,6 +31,7 @@ export function ProductForm({
   const initialSizeQuantities = new Map(
     (initial?.sizes ?? []).map((s) => [s.size, s.quantity])
   );
+  const sizeOrder = sizesForCategory(category);
 
   return (
     <form action={formAction} className="product-form" noValidate>
@@ -87,13 +88,13 @@ export function ProductForm({
         />
         <p className="form-field__hint">
           Quantity 0 → shows as &quot;Out of stock&quot; automatically.
-          {category === "CLOTHING"
+          {sizeOrder.length > 0
             ? " Ignored if any size below is filled in — total stock is then the sum of sizes."
             : ""}
         </p>
       </div>
 
-      {category === "CLOTHING" ? (
+      {sizeOrder.length > 0 ? (
         <div className="form-field">
           <label>Sizes &amp; Stock (optional)</label>
           <p className="form-field__hint">
@@ -102,7 +103,7 @@ export function ProductForm({
             before ordering.
           </p>
           <div className="product-form__sizes">
-            {SIZE_ORDER.map((size) => (
+            {sizeOrder.map((size) => (
               <div className="product-form__size-row" key={size}>
                 <label htmlFor={`size_${size}`}>{SIZE_LABELS[size]}</label>
                 <input

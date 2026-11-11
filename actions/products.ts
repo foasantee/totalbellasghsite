@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { productFormSchema, productSizeInputSchema } from "@/lib/validation";
 import { slugify } from "@/lib/format";
-import { CATEGORY_SLUGS, SIZE_ORDER } from "@/lib/site-config";
+import { CATEGORY_SLUGS, ALL_SIZES } from "@/lib/site-config";
 import type { Category } from "@prisma/client";
 import type { z } from "zod";
 
@@ -38,8 +38,10 @@ function parseImages(formData: FormData): string[] {
 // Each size has its own input, named `size_<SIZE>`. A blank input means
 // that size isn't offered at all; "0" means offered but currently out of
 // stock for that size — both are different from "field not present".
+// Checked against every size value, not just the category's own list, since
+// the form only renders the ones relevant to the selected category anyway.
 function parseSizes(formData: FormData): z.infer<typeof productSizeInputSchema>[] {
-  return SIZE_ORDER.map((size) => ({ size, raw: formData.get(`size_${size}`) }))
+  return ALL_SIZES.map((size) => ({ size, raw: formData.get(`size_${size}`) }))
     .filter((entry) => entry.raw !== null && String(entry.raw).trim() !== "")
     .map((entry) => ({ size: entry.size, quantity: Number(entry.raw) }));
 }

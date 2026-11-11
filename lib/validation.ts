@@ -31,6 +31,14 @@ const SIZE_VALUES = [
   "SIZE_14",
   "SIZE_16",
   "SIZE_18",
+  "SHOE_4_37",
+  "SHOE_5_38",
+  "SHOE_6_39",
+  "SHOE_7_40",
+  "SHOE_8_41",
+  "SHOE_9_42",
+  "SHOE_10_43",
+  "SHOE_11_44",
 ] as const;
 
 export const checkoutItemSchema = z.object({
