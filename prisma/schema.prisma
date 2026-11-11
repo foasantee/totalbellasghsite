@@ -28,6 +28,20 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum Size {
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+  SIZE_10
+  SIZE_12
+  SIZE_14
+  SIZE_16
+  SIZE_18
+}
+
 model Product {
   id          String         @id @default(cuid())
   name        String
@@ -38,14 +52,32 @@ model Product {
   // Single source of truth for stock. "In stock" / "out of stock" is ALWAYS
   // derived from this (quantity > 0) in application code — never stored as
   // a separate flag, so it can never drift out of sync.
+  // Source of truth for CLOTHING products with no sizes defined below. Once
+  // a product has ProductSize rows, this is kept in sync as their sum — see
+  // the comment in actions/products.ts — so "in stock" checks elsewhere in
+  // the app never need to know whether a product uses sizes.
   quantity    Int            @default(0)
   badge       String?
   images      ProductImage[]
+  sizes       ProductSize[]
   orderItems  OrderItem[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
   @@index([category])
+}
+
+model ProductSize {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      Size
+  quantity  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, size])
+  @@index([productId])
 }
 
 model ProductImage {
@@ -86,6 +118,10 @@ model OrderItem {
   product             Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   productNameAtOrder  String
   productImageAtOrder String?
+  // Snapshot display label ("M", "10"), not a live Size reference — same
+  // reasoning as the fields above: an order's history must survive the
+  // product's sizes being edited or removed later.
+  sizeAtOrder         String?
   // NEVER re-read the live Product.price for historical orders — prices
   // change, this snapshot is what the customer actually agreed to.
   unitPriceAtOrder    Decimal  @db.Decimal(10, 2)

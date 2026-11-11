@@ -17,6 +17,8 @@ export type CartItem = {
   name: string;
   price: number;
   image: string | null;
+  /** Size label (e.g. "M", "10"), or null for products that don't use sizes. */
+  size: string | null;
   quantity: number;
   /** Stock available at the time it was added — used only as a soft UI cap. */
   maxQuantity: number;
@@ -25,12 +27,16 @@ export type CartItem = {
 type CartContextValue = {
   items: CartItem[];
   addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeItem: (productId: string) => void;
+  updateQuantity: (productId: string, size: string | null, quantity: number) => void;
+  removeItem: (productId: string, size: string | null) => void;
   clear: () => void;
   subtotal: number;
   itemCount: number;
 };
+
+function sameLine(a: { productId: string; size: string | null }, b: { productId: string; size: string | null }) {
+  return a.productId === b.productId && a.size === b.size;
+}
 
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -64,25 +70,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback((item: Omit<CartItem, "quantity">, quantity = 1) => {
     setItems((prev) => {
-      const existing = prev.find((line) => line.productId === item.productId);
+      const existing = prev.find((line) => sameLine(line, item));
       if (existing) {
         const nextQuantity = Math.min(
           existing.quantity + quantity,
           existing.maxQuantity
         );
         return prev.map((line) =>
-          line.productId === item.productId ? { ...line, quantity: nextQuantity } : line
+          sameLine(line, item) ? { ...line, quantity: nextQuantity } : line
         );
       }
       return [...prev, { ...item, quantity: Math.min(quantity, item.maxQuantity) }];
     });
   }, []);
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, size: string | null, quantity: number) => {
     setItems((prev) =>
       prev
         .map((line) =>
-          line.productId === productId
+          sameLine(line, { productId, size })
             ? { ...line, quantity: Math.max(0, Math.min(quantity, line.maxQuantity)) }
             : line
         )
@@ -90,8 +96,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((line) => line.productId !== productId));
+  const removeItem = useCallback((productId: string, size: string | null) => {
+    setItems((prev) => prev.filter((line) => !sameLine(line, { productId, size })));
   }, []);
 
   const clear = useCallback(() => setItems([]), []);

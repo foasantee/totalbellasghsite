@@ -7,8 +7,8 @@ import { checkoutSchema, type CheckoutInput } from "@/lib/validation";
 import { toPesewas } from "@/lib/format";
 import { processPayment } from "@/lib/payments/processPayment";
 import { sendOrderNotification } from "@/lib/email";
-import { CATEGORY_SLUGS } from "@/lib/site-config";
-import type { OrderStatus, PaymentStatus } from "@prisma/client";
+import { CATEGORY_SLUGS, SIZE_LABELS } from "@/lib/site-config";
+import type { OrderStatus, PaymentStatus, Size } from "@prisma/client";
 
 export type PlaceOrderResult =
   | { ok: true; orderId: string }
@@ -37,7 +37,7 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
   const productIds = data.items.map((item) => item.productId);
   const products = await prisma.product.findMany({
     where: { id: { in: productIds } },
-    include: { images: { orderBy: { position: "asc" }, take: 1 } },
+    include: { images: { orderBy: { position: "asc" }, take: 1 }, sizes: true },
   });
   const productById = new Map(products.map((product) => [product.id, product]));
 
@@ -46,7 +46,16 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
     if (!product) {
       return { ok: false, error: "One of the items in your cart is no longer available." };
     }
-    if (line.quantity > product.quantity) {
+    if (line.size) {
+      const sizeRow = product.sizes.find((s) => s.size === line.size);
+      const available = sizeRow?.quantity ?? 0;
+      if (line.quantity > available) {
+        return {
+          ok: false,
+          error: `Only ${available} of "${product.name}" (size ${SIZE_LABELS[line.size]}) left in stock. Please update your cart.`,
+        };
+      }
+    } else if (line.quantity > product.quantity) {
       return {
         ok: false,
         error: `Only ${product.quantity} of "${product.name}" left in stock. Please update your cart.`,
@@ -60,6 +69,7 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
       productId: product.id,
       productNameAtOrder: product.name,
       productImageAtOrder: product.images[0]?.url ?? null,
+      sizeAtOrder: line.size ? SIZE_LABELS[line.size] : null,
       unitPriceAtOrder: product.price,
       quantity: line.quantity,
     };
@@ -79,13 +89,32 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
   try {
     order = await prisma.$transaction(async (tx) => {
       for (const line of data.items) {
-        const result = await tx.product.updateMany({
-          where: { id: line.productId, quantity: { gte: line.quantity } },
-          data: { quantity: { decrement: line.quantity } },
-        });
-        if (result.count === 0) {
-          const product = productById.get(line.productId)!;
-          throw new StockConflictError(product.name);
+        if (line.size) {
+          // Decrement the specific size's stock first — this is the
+          // conditional, race-safe check. Product.quantity is the maintained
+          // sum across sizes (see schema.prisma), so once the per-size
+          // decrement succeeds the parent total is guaranteed to cover it too.
+          const sizeResult = await tx.productSize.updateMany({
+            where: { productId: line.productId, size: line.size as Size, quantity: { gte: line.quantity } },
+            data: { quantity: { decrement: line.quantity } },
+          });
+          if (sizeResult.count === 0) {
+            const product = productById.get(line.productId)!;
+            throw new StockConflictError(product.name);
+          }
+          await tx.product.update({
+            where: { id: line.productId },
+            data: { quantity: { decrement: line.quantity } },
+          });
+        } else {
+          const result = await tx.product.updateMany({
+            where: { id: line.productId, quantity: { gte: line.quantity } },
+            data: { quantity: { decrement: line.quantity } },
+          });
+          if (result.count === 0) {
+            const product = productById.get(line.productId)!;
+            throw new StockConflictError(product.name);
+          }
         }
       }
 

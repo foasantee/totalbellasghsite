@@ -1,4 +1,4 @@
-import type { Category } from "@prisma/client";
+import type { Category, Size } from "@prisma/client";
 
 /**
  * Rarely-changing site chrome — business info, brand list. Not database
@@ -47,3 +47,31 @@ export const SLUG_TO_CATEGORY: Record<string, Category> = {
 };
 
 export const CATEGORY_ORDER: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"];
+
+export const SIZE_LABELS: Record<Size, string> = {
+  S: "S",
+  M: "M",
+  L: "L",
+  XL: "XL",
+  XXL: "XXL",
+  XXXL: "XXXL",
+  SIZE_10: "10",
+  SIZE_12: "12",
+  SIZE_14: "14",
+  SIZE_16: "16",
+  SIZE_18: "18",
+};
+
+export const SIZE_ORDER: Size[] = [
+  "S",
+  "M",
+  "L",
+  "XL",
+  "XXL",
+  "XXXL",
+  "SIZE_10",
+  "SIZE_12",
+  "SIZE_14",
+  "SIZE_16",
+  "SIZE_18",
+];

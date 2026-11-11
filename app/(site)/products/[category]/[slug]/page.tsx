@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
-import { CATEGORY_LABELS, SLUG_TO_CATEGORY } from "@/lib/site-config";
+import { CATEGORY_LABELS, SLUG_TO_CATEGORY, SIZE_LABELS, SIZE_ORDER } from "@/lib/site-config";
 import { StockBadge } from "@/components/product/StockBadge";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 
@@ -30,6 +30,14 @@ export default async function ProductDetailPage({ params }: Props) {
   if (!product) notFound();
 
   const primaryImage = product.images[0]?.url ?? null;
+  const sizeOptions =
+    product.sizes.length > 0
+      ? SIZE_ORDER.filter((size) => product.sizes.some((s) => s.size === size)).map((size) => ({
+          size,
+          label: SIZE_LABELS[size],
+          quantity: product.sizes.find((s) => s.size === size)!.quantity,
+        }))
+      : undefined;
 
   return (
     <section className="section" aria-labelledby="product-heading">
@@ -68,6 +76,7 @@ export default async function ProductDetailPage({ params }: Props) {
             price={Number(product.price)}
             image={primaryImage}
             quantityAvailable={product.quantity}
+            sizes={sizeOptions}
           />
         </div>
       </div>

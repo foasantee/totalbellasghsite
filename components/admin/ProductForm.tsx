@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { ImageUploader } from "./ImageUploader";
 import type { ProductFormState } from "@/actions/products";
-import { CATEGORY_LABELS } from "@/lib/site-config";
-import type { Category } from "@prisma/client";
+import { CATEGORY_LABELS, SIZE_LABELS, SIZE_ORDER } from "@/lib/site-config";
+import type { Category, Size } from "@prisma/client";
 
 const CATEGORIES: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"];
 
@@ -23,9 +23,14 @@ export function ProductForm({
     quantity: number;
     badge: string | null;
     images: string[];
+    sizes: { size: Size; quantity: number }[];
   };
 }) {
   const [state, formAction, pending] = useActionState<ProductFormState, FormData>(action, {});
+  const [category, setCategory] = useState<Category>(initial?.category ?? "CLOTHING");
+  const initialSizeQuantities = new Map(
+    (initial?.sizes ?? []).map((s) => [s.size, s.quantity])
+  );
 
   return (
     <form action={formAction} className="product-form" noValidate>
@@ -54,10 +59,16 @@ export function ProductForm({
 
       <div className="form-field">
         <label htmlFor="category">Category</label>
-        <select id="category" name="category" required defaultValue={initial?.category ?? "CLOTHING"}>
-          {CATEGORIES.map((category) => (
-            <option key={category} value={category}>
-              {CATEGORY_LABELS[category]}
+        <select
+          id="category"
+          name="category"
+          required
+          defaultValue={initial?.category ?? "CLOTHING"}
+          onChange={(event) => setCategory(event.target.value as Category)}
+        >
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {CATEGORY_LABELS[cat]}
             </option>
           ))}
         </select>
@@ -74,8 +85,40 @@ export function ProductForm({
           required
           defaultValue={initial?.quantity ?? 0}
         />
-        <p className="form-field__hint">Quantity 0 → shows as &quot;Out of stock&quot; automatically.</p>
+        <p className="form-field__hint">
+          Quantity 0 → shows as &quot;Out of stock&quot; automatically.
+          {category === "CLOTHING"
+            ? " Ignored if any size below is filled in — total stock is then the sum of sizes."
+            : ""}
+        </p>
       </div>
+
+      {category === "CLOTHING" ? (
+        <div className="form-field">
+          <label>Sizes &amp; Stock (optional)</label>
+          <p className="form-field__hint">
+            Leave all sizes blank to manage this item with the single Quantity field above. Fill in
+            any size to track stock per size instead — a customer will then have to pick a size
+            before ordering.
+          </p>
+          <div className="product-form__sizes">
+            {SIZE_ORDER.map((size) => (
+              <div className="product-form__size-row" key={size}>
+                <label htmlFor={`size_${size}`}>{SIZE_LABELS[size]}</label>
+                <input
+                  type="number"
+                  id={`size_${size}`}
+                  name={`size_${size}`}
+                  min="0"
+                  step="1"
+                  placeholder="—"
+                  defaultValue={initialSizeQuantities.get(size) ?? ""}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="form-field">
         <label htmlFor="badge">Badge (optional)</label>

@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart/cart-context";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { placeOrder } from "@/actions/orders";
+import type { CheckoutInput } from "@/lib/validation";
+
+type CheckoutSize = CheckoutInput["items"][number]["size"];
 
 export function CheckoutForm() {
   const { items, clear } = useCart();
@@ -24,7 +27,11 @@ export function CheckoutForm() {
       customerPhone: String(form.get("customerPhone") || ""),
       deliveryAddress: String(form.get("deliveryAddress") || ""),
       notes: String(form.get("notes") || ""),
-      items: items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+      items: items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        size: (item.size ?? undefined) as CheckoutSize,
+      })),
     });
 
     setSubmitting(false);

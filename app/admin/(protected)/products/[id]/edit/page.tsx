@@ -29,6 +29,7 @@ export default async function EditProductPage({ params }: Props) {
           quantity: product.quantity,
           badge: product.badge,
           images: product.images.map((image) => image.url),
+          sizes: product.sizes.map((s) => ({ size: s.size, quantity: s.quantity })),
         }}
       />
     </div>

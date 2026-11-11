@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/db";
-import type { Category, Product, ProductImage } from "@prisma/client";
+import type { Category, Product, ProductImage, ProductSize } from "@prisma/client";
 import type { ProductCardData } from "@/components/product/ProductCard";
 
-type ProductWithImages = Product & { images: ProductImage[] };
+type ProductWithImages = Product & { images: ProductImage[]; sizes: ProductSize[] };
 
 export function toCardData(product: ProductWithImages): ProductCardData {
   return {
@@ -22,7 +22,7 @@ export async function getProductsByCategory(
 ): Promise<ProductWithImages[]> {
   return prisma.product.findMany({
     where: { category },
-    include: { images: { orderBy: { position: "asc" } } },
+    include: { images: { orderBy: { position: "asc" } }, sizes: true },
     orderBy: { createdAt: "desc" },
     ...(limit ? { take: limit } : {}),
   });
@@ -34,13 +34,13 @@ export async function getProductBySlug(
 ): Promise<ProductWithImages | null> {
   return prisma.product.findFirst({
     where: { category, slug },
-    include: { images: { orderBy: { position: "asc" } } },
+    include: { images: { orderBy: { position: "asc" } }, sizes: true },
   });
 }
 
 export async function getAllProductsForAdmin(): Promise<ProductWithImages[]> {
   return prisma.product.findMany({
-    include: { images: { orderBy: { position: "asc" } } },
+    include: { images: { orderBy: { position: "asc" } }, sizes: true },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -48,6 +48,6 @@ export async function getAllProductsForAdmin(): Promise<ProductWithImages[]> {
 export async function getProductByIdForAdmin(id: string): Promise<ProductWithImages | null> {
   return prisma.product.findUnique({
     where: { id },
-    include: { images: { orderBy: { position: "asc" } } },
+    include: { images: { orderBy: { position: "asc" } }, sizes: true },
   });
 }

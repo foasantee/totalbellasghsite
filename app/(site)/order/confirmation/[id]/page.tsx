@@ -33,6 +33,7 @@ export default async function OrderConfirmationPage({ params }: Props) {
           <thead>
             <tr>
               <th>Item</th>
+              <th>Size</th>
               <th>Quantity</th>
               <th>Price</th>
             </tr>
@@ -41,6 +42,7 @@ export default async function OrderConfirmationPage({ params }: Props) {
             {order.items.map((item) => (
               <tr key={item.id}>
                 <td>{item.productNameAtOrder}</td>
+                <td>{item.sizeAtOrder || "—"}</td>
                 <td>{item.quantity}</td>
                 <td>{formatPrice(item.unitPriceAtOrder)}</td>
               </tr>

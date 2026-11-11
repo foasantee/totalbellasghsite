@@ -49,7 +49,9 @@ export async function sendOrderNotification(order: OrderWithItems): Promise<void
                 ? `<img src="${toAbsoluteUrl(item.productImageAtOrder)}" alt="" width="48" height="60" style="object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:8px;" />`
                 : ""
             }
-            <span style="vertical-align:middle;">${item.productNameAtOrder}</span>
+            <span style="vertical-align:middle;">${item.productNameAtOrder}${
+              item.sizeAtOrder ? ` (Size: ${item.sizeAtOrder})` : ""
+            }</span>
           </td>
           <td style="padding:4px 8px;">${item.quantity}</td>
           <td style="padding:4px 8px;">${formatPrice(item.unitPriceAtOrder)}</td>
