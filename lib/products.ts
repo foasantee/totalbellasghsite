@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import type { Category, Product, ProductImage, ProductSize } from "@prisma/client";
+import type { Category, ClothingSubcategory, Product, ProductImage, ProductSize } from "@prisma/client";
 import type { ProductCardData } from "@/components/product/ProductCard";
 
 type ProductWithImages = Product & { images: ProductImage[]; sizes: ProductSize[] };
@@ -18,10 +18,11 @@ export function toCardData(product: ProductWithImages): ProductCardData {
 
 export async function getProductsByCategory(
   category: Category,
-  limit?: number
+  limit?: number,
+  subcategory?: ClothingSubcategory
 ): Promise<ProductWithImages[]> {
   return prisma.product.findMany({
-    where: { category },
+    where: { category, ...(subcategory ? { subcategory } : {}) },
     include: { images: { orderBy: { position: "asc" } }, sizes: true },
     orderBy: { createdAt: "desc" },
     ...(limit ? { take: limit } : {}),

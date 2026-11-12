@@ -1,4 +1,4 @@
-import type { Category, Size } from "@prisma/client";
+import type { Category, ClothingSubcategory, Size } from "@prisma/client";
 
 /**
  * Rarely-changing site chrome — business info, brand list. Not database
@@ -108,3 +108,46 @@ const SIZE_ORDER_BY_CATEGORY: Partial<Record<Category, Size[]>> = {
 export function sizesForCategory(category: Category): Size[] {
   return SIZE_ORDER_BY_CATEGORY[category] ?? [];
 }
+
+export const CLOTHING_SUBCATEGORY_ORDER: ClothingSubcategory[] = [
+  "BLOUSE",
+  "T_SHIRT",
+  "SHIRT",
+  "DRESS",
+  "TROUSERS",
+  "BLAZERS",
+  "SKIRTS",
+  "JUMPSUITS",
+  "JEANS",
+  "TWO_PIECE",
+];
+
+export const SUBCATEGORY_LABELS: Record<ClothingSubcategory, string> = {
+  BLOUSE: "Blouse",
+  T_SHIRT: "T-shirt",
+  SHIRT: "Shirt",
+  DRESS: "Dress",
+  TROUSERS: "Trousers",
+  BLAZERS: "Blazers",
+  SKIRTS: "Skirts",
+  JUMPSUITS: "Jumpsuits",
+  JEANS: "Jeans",
+  TWO_PIECE: "2-piece",
+};
+
+export const SUBCATEGORY_SLUGS: Record<ClothingSubcategory, string> = {
+  BLOUSE: "blouse",
+  T_SHIRT: "t-shirt",
+  SHIRT: "shirt",
+  DRESS: "dress",
+  TROUSERS: "trousers",
+  BLAZERS: "blazers",
+  SKIRTS: "skirts",
+  JUMPSUITS: "jumpsuits",
+  JEANS: "jeans",
+  TWO_PIECE: "2-piece",
+};
+
+export const SLUG_TO_SUBCATEGORY: Record<string, ClothingSubcategory> = Object.fromEntries(
+  CLOTHING_SUBCATEGORY_ORDER.map((sub) => [SUBCATEGORY_SLUGS[sub], sub])
+);

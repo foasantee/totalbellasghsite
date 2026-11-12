@@ -26,6 +26,7 @@ export default async function EditProductPage({ params }: Props) {
           description: product.description,
           price: product.price.toString(),
           category: product.category,
+          subcategory: product.subcategory,
           quantity: product.quantity,
           badge: product.badge,
           images: product.images.map((image) => image.url),

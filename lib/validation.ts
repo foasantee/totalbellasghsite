@@ -85,11 +85,26 @@ const imageRefSchema = z
     { message: "Invalid image." }
   );
 
+const SUBCATEGORY_VALUES = [
+  "BLOUSE",
+  "T_SHIRT",
+  "SHIRT",
+  "DRESS",
+  "TROUSERS",
+  "BLAZERS",
+  "SKIRTS",
+  "JUMPSUITS",
+  "JEANS",
+  "TWO_PIECE",
+] as const;
+
 export const productFormSchema = z.object({
   name: z.string().trim().min(1, "Product name is required."),
   description: z.string().trim().optional().or(z.literal("")),
   price: z.coerce.number().positive("Price must be greater than zero."),
   category: z.enum(["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"]),
+  // Only meaningful for CLOTHING — cleared in application code otherwise.
+  subcategory: z.enum(SUBCATEGORY_VALUES).optional().or(z.literal("")),
   quantity: z.coerce.number().int().min(0, "Quantity cannot be negative."),
   badge: z.string().trim().optional().or(z.literal("")),
   images: z.array(imageRefSchema).default([]),

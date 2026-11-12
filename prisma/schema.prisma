@@ -50,6 +50,19 @@ enum Size {
   SHOE_11_44
 }
 
+enum ClothingSubcategory {
+  BLOUSE
+  T_SHIRT
+  SHIRT
+  DRESS
+  TROUSERS
+  BLAZERS
+  SKIRTS
+  JUMPSUITS
+  JEANS
+  TWO_PIECE
+}
+
 model Product {
   id          String         @id @default(cuid())
   name        String
@@ -57,6 +70,9 @@ model Product {
   description String
   price       Decimal        @db.Decimal(10, 2)
   category    Category
+  // Only meaningful when category is CLOTHING — enforced in application
+  // code (actions/products.ts), not at the schema level.
+  subcategory ClothingSubcategory?
   // Single source of truth for stock. "In stock" / "out of stock" is ALWAYS
   // derived from this (quantity > 0) in application code — never stored as
   // a separate flag, so it can never drift out of sync.

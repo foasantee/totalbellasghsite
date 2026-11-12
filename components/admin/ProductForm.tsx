@@ -3,8 +3,14 @@
 import { useActionState, useState } from "react";
 import { ImageUploader } from "./ImageUploader";
 import type { ProductFormState } from "@/actions/products";
-import { CATEGORY_LABELS, SIZE_LABELS, sizesForCategory } from "@/lib/site-config";
-import type { Category, Size } from "@prisma/client";
+import {
+  CATEGORY_LABELS,
+  SIZE_LABELS,
+  sizesForCategory,
+  CLOTHING_SUBCATEGORY_ORDER,
+  SUBCATEGORY_LABELS,
+} from "@/lib/site-config";
+import type { Category, ClothingSubcategory, Size } from "@prisma/client";
 
 const CATEGORIES: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"];
 
@@ -20,6 +26,7 @@ export function ProductForm({
     description: string;
     price: number | string;
     category: Category;
+    subcategory: ClothingSubcategory | null;
     quantity: number;
     badge: string | null;
     images: string[];
@@ -74,6 +81,20 @@ export function ProductForm({
           ))}
         </select>
       </div>
+
+      {category === "CLOTHING" ? (
+        <div className="form-field">
+          <label htmlFor="subcategory">Subcategory (optional)</label>
+          <select id="subcategory" name="subcategory" defaultValue={initial?.subcategory ?? ""}>
+            <option value="">None</option>
+            {CLOTHING_SUBCATEGORY_ORDER.map((sub) => (
+              <option key={sub} value={sub}>
+                {SUBCATEGORY_LABELS[sub]}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
 
       <div className="form-field">
         <label htmlFor="quantity">Quantity</label>

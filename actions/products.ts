@@ -63,6 +63,7 @@ export async function createProduct(
     description: formData.get("description"),
     price: formData.get("price"),
     category: formData.get("category"),
+    subcategory: formData.get("subcategory"),
     quantity: formData.get("quantity"),
     badge: formData.get("badge"),
     images: parseImages(formData),
@@ -84,6 +85,8 @@ export async function createProduct(
       description: data.description || "",
       price: data.price,
       category: data.category,
+      // Subcategory only means anything for CLOTHING — discard it otherwise.
+      subcategory: data.category === "CLOTHING" ? data.subcategory || null : null,
       // When sizes are in use, the total is always their sum — never the
       // raw quantity field, which is ignored in that case.
       quantity: usesSizes
@@ -115,6 +118,7 @@ export async function updateProduct(
     description: formData.get("description"),
     price: formData.get("price"),
     category: formData.get("category"),
+    subcategory: formData.get("subcategory"),
     quantity: formData.get("quantity"),
     badge: formData.get("badge"),
     images: parseImages(formData),
@@ -140,6 +144,7 @@ export async function updateProduct(
         description: data.description || "",
         price: data.price,
         category: data.category,
+        subcategory: data.category === "CLOTHING" ? data.subcategory || null : null,
         quantity: usesSizes
           ? data.sizes.reduce((sum, s) => sum + s.quantity, 0)
           : data.quantity,
