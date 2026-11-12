@@ -30,6 +30,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   SHOES: "Shoes & Footwear",
   BAGS: "Bags",
   FRAGRANCE: "Fragrance",
+  SALES: "Sales",
 };
 
 export const CATEGORY_SLUGS: Record<Category, string> = {
@@ -37,6 +38,7 @@ export const CATEGORY_SLUGS: Record<Category, string> = {
   SHOES: "shoes",
   BAGS: "bags",
   FRAGRANCE: "fragrance",
+  SALES: "sales",
 };
 
 export const SLUG_TO_CATEGORY: Record<string, Category> = {
@@ -44,9 +46,10 @@ export const SLUG_TO_CATEGORY: Record<string, Category> = {
   shoes: "SHOES",
   bags: "BAGS",
   fragrance: "FRAGRANCE",
+  sales: "SALES",
 };
 
-export const CATEGORY_ORDER: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"];
+export const CATEGORY_ORDER: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE", "SALES"];
 
 export const SIZE_LABELS: Record<Size, string> = {
   S: "S",

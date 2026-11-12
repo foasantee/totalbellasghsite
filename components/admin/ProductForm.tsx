@@ -12,7 +12,7 @@ import {
 } from "@/lib/site-config";
 import type { Category, ClothingSubcategory, Size } from "@prisma/client";
 
-const CATEGORIES: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE"];
+const CATEGORIES: Category[] = ["CLOTHING", "SHOES", "BAGS", "FRAGRANCE", "SALES"];
 
 type Action = (state: ProductFormState, formData: FormData) => Promise<ProductFormState>;
 

@@ -3,6 +3,12 @@
    base:  <480px    sm: >=480px    md: >=768px    lg: >=992px
    ========================================================================== */
 
+/* Loaded last so it reliably overrides component text colors regardless of
+   specificity — used wherever a "Sales" label needs to stand out. */
+.text-hot-coral {
+  color: var(--color-hot-coral) !important;
+}
+
 /* ---- sm: >=480px ---- */
 @media (min-width: 480px) {
   .product-grid {

@@ -11,7 +11,8 @@ export const dynamic = "force-dynamic";
 const PREVIEW_LIMIT = 8;
 
 export default async function HomePage() {
-  const [clothing, shoes, bags, fragrance] = await Promise.all([
+  const [sales, clothing, shoes, bags, fragrance] = await Promise.all([
+    getProductsByCategory("SALES", PREVIEW_LIMIT),
     getProductsByCategory("CLOTHING", PREVIEW_LIMIT),
     getProductsByCategory("SHOES", PREVIEW_LIMIT),
     getProductsByCategory("BAGS", PREVIEW_LIMIT),
@@ -35,6 +36,26 @@ export default async function HomePage() {
           </a>
         </div>
       </section>
+
+      {sales.length > 0 ? (
+        <section id="sales" className="section" aria-labelledby="sales-heading">
+          <div className="container">
+            <div className="section__header">
+              <span className="section__eyebrow">Category</span>
+              <h2 id="sales-heading" className="text-hot-coral">
+                Sales
+              </h2>
+              <p className="section__lede">Limited-time price drops — while stocks last.</p>
+            </div>
+            <ProductGrid products={sales.map(toCardData)} single={sales.length === 1} />
+            <p className="section__view-all">
+              <Link href="/products/sales" className="text-hot-coral">
+                View all Sales →
+              </Link>
+            </p>
+          </div>
+        </section>
+      ) : null}
 
       <section id="clothing" className="section" aria-labelledby="clothing-heading">
         <div className="container">

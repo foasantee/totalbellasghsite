@@ -63,7 +63,10 @@ export async function createProduct(
     description: formData.get("description"),
     price: formData.get("price"),
     category: formData.get("category"),
-    subcategory: formData.get("subcategory"),
+    // Not every category's form renders this field (only CLOTHING does), so
+    // it's often absent — FormData.get() then returns null, not undefined,
+    // which z.optional() doesn't accept; normalize to "" either way.
+    subcategory: formData.get("subcategory") ?? "",
     quantity: formData.get("quantity"),
     badge: formData.get("badge"),
     images: parseImages(formData),
@@ -118,7 +121,7 @@ export async function updateProduct(
     description: formData.get("description"),
     price: formData.get("price"),
     category: formData.get("category"),
-    subcategory: formData.get("subcategory"),
+    subcategory: formData.get("subcategory") ?? "",
     quantity: formData.get("quantity"),
     badge: formData.get("badge"),
     images: parseImages(formData),

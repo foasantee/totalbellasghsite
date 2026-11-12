@@ -33,7 +33,11 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           {product.badge ? <span className="product-card__badge">{product.badge}</span> : null}
         </div>
         <div className="product-card__body">
-          <p className="product-card__category">{CATEGORY_LABELS[product.category]}</p>
+          <p
+            className={`product-card__category${product.category === "SALES" ? " text-hot-coral" : ""}`}
+          >
+            {CATEGORY_LABELS[product.category]}
+          </p>
           <h3 className="product-card__name">{product.name}</h3>
           <p className="product-card__price">{formatPrice(product.price)}</p>
         </div>

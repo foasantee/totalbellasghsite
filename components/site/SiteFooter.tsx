@@ -19,6 +19,11 @@ export function SiteFooter() {
               <li><Link href="/products/shoes">Shoes &amp; Footwear</Link></li>
               <li><Link href="/products/bags">Bags</Link></li>
               <li><Link href="/products/fragrance">Fragrance</Link></li>
+              <li>
+                <Link href="/products/sales" className="text-hot-coral">
+                  Sales
+                </Link>
+              </li>
               <li><Link href="/#brands">Brands</Link></li>
             </ul>
           </div>

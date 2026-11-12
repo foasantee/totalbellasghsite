@@ -13,6 +13,7 @@ enum Category {
   SHOES
   BAGS
   FRAGRANCE
+  SALES
 }
 
 enum OrderStatus {

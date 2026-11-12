@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const NAV_LINKS = [
+const NAV_LINKS: { href: string; label: string; coral?: boolean }[] = [
   { href: "/products/clothing", label: "Clothing" },
   { href: "/products/shoes", label: "Shoes & Footwear" },
   { href: "/products/bags", label: "Bags" },
   { href: "/products/fragrance", label: "Fragrance" },
+  { href: "/products/sales", label: "Sales", coral: true },
   { href: "/#brands", label: "Brands" },
   { href: "/contact", label: "Contact" },
 ];
@@ -80,7 +81,9 @@ export function PrimaryNav() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`primary-nav__link${isActive(link.href) ? " is-active" : ""}`}
+                className={`primary-nav__link${isActive(link.href) ? " is-active" : ""}${
+                  link.coral ? " text-hot-coral" : ""
+                }`}
               >
                 {link.label}
               </Link>

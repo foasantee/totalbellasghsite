@@ -22,6 +22,7 @@
   --color-header-bg: #f6f5f1;      /* soft cream — header background, matches the new logo's own backdrop */
   --color-header-text: #6b3a36;    /* deep terracotta — header/nav text, from the new logo's line art, darkened for contrast on cream */
   --color-pink-text: #831843;      /* deep rose pink — used for headings sitewide (unchanged by the new logo for now) */
+  --color-hot-coral: #ff4d4d;       /* Sales category label — nav, footer, headings, product cards */
 
   /* Type */
   --font-heading: "Cormorant Garamond", "Georgia", serif;

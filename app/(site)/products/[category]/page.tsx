@@ -40,7 +40,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       <div className="container">
         <div className="section__header">
           <span className="section__eyebrow">Category</span>
-          <h1 id="category-heading">{CATEGORY_LABELS[category]}</h1>
+          <h1 id="category-heading" className={category === "SALES" ? "text-hot-coral" : undefined}>
+            {CATEGORY_LABELS[category]}
+          </h1>
         </div>
 
         {category === "CLOTHING" ? (
