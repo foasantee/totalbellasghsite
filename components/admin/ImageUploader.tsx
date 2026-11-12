@@ -5,6 +5,29 @@ import { useRef, useState } from "react";
 
 type PendingImage = { url: string; uploading: boolean };
 
+// Uploads via XMLHttpRequest rather than fetch(). Safari (especially on
+// iOS) has a long-standing bug where fetch() with a File/Blob body throws
+// a bare "TypeError: Load failed" for larger uploads — exactly the size
+// range of real phone camera photos — with no way to distinguish it from
+// an actual network error. XHR doesn't have this problem and also gives
+// real upload-progress events for free.
+function uploadToStorage(url: string, file: File): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.setRequestHeader("x-amz-acl", "public-read");
+    xhr.timeout = 120_000;
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error("Upload to storage failed."));
+    };
+    xhr.onerror = () => reject(new Error("Upload failed — check your connection and try again."));
+    xhr.ontimeout = () => reject(new Error("Upload timed out — check your connection and try again."));
+    xhr.send(file);
+  });
+}
+
 export function ImageUploader({ initialImages = [] }: { initialImages?: string[] }) {
   const [images, setImages] = useState<PendingImage[]>(
     initialImages.map((url) => ({ url, uploading: false }))
@@ -30,12 +53,7 @@ export function ImageUploader({ initialImages = [] }: { initialImages?: string[]
       // parameter, but DigitalOcean Spaces only actually grants public-read
       // if the header is also present on the request itself — the query
       // parameter alone is silently ignored. Confirmed by direct testing.
-      const putResponse = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: { "Content-Type": file.type, "x-amz-acl": "public-read" },
-        body: file,
-      });
-      if (!putResponse.ok) throw new Error("Upload to storage failed.");
+      await uploadToStorage(uploadUrl, file);
 
       setImages((prev) =>
         prev.map((img) => (img.url === placeholder.url ? { url: publicUrl, uploading: false } : img))
