@@ -6,7 +6,7 @@ import type { ProductFormState } from "@/actions/products";
 import {
   CATEGORY_LABELS,
   SIZE_LABELS,
-  sizesForCategory,
+  sizeGroupsForCategory,
   CLOTHING_SUBCATEGORY_ORDER,
   SUBCATEGORY_LABELS,
 } from "@/lib/site-config";
@@ -38,7 +38,7 @@ export function ProductForm({
   const initialSizeQuantities = new Map(
     (initial?.sizes ?? []).map((s) => [s.size, s.quantity])
   );
-  const sizeOrder = sizesForCategory(category);
+  const sizeGroups = sizeGroupsForCategory(category);
 
   return (
     <form action={formAction} className="product-form" noValidate>
@@ -109,22 +109,22 @@ export function ProductForm({
         />
         <p className="form-field__hint">
           Quantity 0 → shows as &quot;Out of stock&quot; automatically.
-          {sizeOrder.length > 0
+          {sizeGroups.length > 0
             ? " Ignored if any size below is filled in — total stock is then the sum of sizes."
             : ""}
         </p>
       </div>
 
-      {sizeOrder.length > 0 ? (
-        <div className="form-field">
-          <label>Sizes &amp; Stock (optional)</label>
+      {sizeGroups.map((group) => (
+        <div className="form-field" key={group.label}>
+          <label>{group.label} (optional)</label>
           <p className="form-field__hint">
             Leave all sizes blank to manage this item with the single Quantity field above. Fill in
             any size to track stock per size instead — a customer will then have to pick a size
             before ordering.
           </p>
           <div className="product-form__sizes">
-            {sizeOrder.map((size) => (
+            {group.sizes.map((size) => (
               <div className="product-form__size-row" key={size}>
                 <label htmlFor={`size_${size}`}>{SIZE_LABELS[size]}</label>
                 <input
@@ -140,7 +140,7 @@ export function ProductForm({
             ))}
           </div>
         </div>
-      ) : null}
+      ))}
 
       <div className="form-field">
         <label htmlFor="badge">Badge (optional)</label>

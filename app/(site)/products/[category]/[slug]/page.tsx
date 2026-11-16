@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
-import { CATEGORY_LABELS, SLUG_TO_CATEGORY, SIZE_LABELS, sizesForCategory } from "@/lib/site-config";
+import { CATEGORY_LABELS, SLUG_TO_CATEGORY, SIZE_LABELS, ALL_SIZES } from "@/lib/site-config";
 import { StockBadge } from "@/components/product/StockBadge";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -32,7 +32,10 @@ export default async function ProductDetailPage({ params }: Props) {
   const primaryImage = product.images[0]?.url ?? null;
   const sizeOptions =
     product.sizes.length > 0
-      ? sizesForCategory(product.category)
+      // Which sizes exist is already fully determined by the size rows
+      // themselves — a product's category (which "Sales" overwrites) isn't
+      // a reliable signal of whether it's a clothing or shoe size.
+      ? ALL_SIZES
           .filter((size) => product.sizes.some((s) => s.size === size))
           .map((size) => ({
             size,

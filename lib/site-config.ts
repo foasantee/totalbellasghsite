@@ -102,14 +102,22 @@ export const SHOE_SIZE_ORDER: Size[] = [
 // needing to know which category's grid was rendered.
 export const ALL_SIZES: Size[] = [...CLOTHING_SIZE_ORDER, ...SHOE_SIZE_ORDER];
 
-const SIZE_ORDER_BY_CATEGORY: Partial<Record<Category, Size[]>> = {
-  CLOTHING: CLOTHING_SIZE_ORDER,
-  SHOES: SHOE_SIZE_ORDER,
+export type SizeGroup = { label: string; sizes: Size[] };
+
+const SIZE_GROUPS_BY_CATEGORY: Partial<Record<Category, SizeGroup[]>> = {
+  CLOTHING: [{ label: "Sizes & Stock", sizes: CLOTHING_SIZE_ORDER }],
+  SHOES: [{ label: "Sizes & Stock", sizes: SHOE_SIZE_ORDER }],
+  // A sale item can be a clothing piece or a pair of shoes — show both
+  // groups and let the admin fill in whichever actually applies.
+  SALES: [
+    { label: "Clothing Sizes & Stock", sizes: CLOTHING_SIZE_ORDER },
+    { label: "Shoe Sizes & Stock", sizes: SHOE_SIZE_ORDER },
+  ],
 };
 
-/** Sizes offered for a category's admin/storefront size picker — empty for categories that don't use sizes. */
-export function sizesForCategory(category: Category): Size[] {
-  return SIZE_ORDER_BY_CATEGORY[category] ?? [];
+/** Size groups offered for a category's admin size picker — empty for categories that don't use sizes. */
+export function sizeGroupsForCategory(category: Category): SizeGroup[] {
+  return SIZE_GROUPS_BY_CATEGORY[category] ?? [];
 }
 
 export const CLOTHING_SUBCATEGORY_ORDER: ClothingSubcategory[] = [
