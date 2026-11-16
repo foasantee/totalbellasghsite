@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProductBySlug } from "@/lib/products";
@@ -6,6 +5,7 @@ import { formatPrice } from "@/lib/format";
 import { CATEGORY_LABELS, SLUG_TO_CATEGORY, SIZE_LABELS, sizesForCategory } from "@/lib/site-config";
 import { StockBadge } from "@/components/product/StockBadge";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { ProductGallery } from "@/components/product/ProductGallery";
 
 export const dynamic = "force-dynamic";
 
@@ -44,22 +44,7 @@ export default async function ProductDetailPage({ params }: Props) {
   return (
     <section className="section" aria-labelledby="product-heading">
       <div className="container product-detail">
-        <div className="product-detail__gallery">
-          <div className="product-detail__main-image">
-            {primaryImage ? (
-              <Image src={primaryImage} alt={product.name} fill sizes="(min-width: 992px) 50vw, 100vw" />
-            ) : null}
-          </div>
-          {product.images.length > 1 ? (
-            <div className="product-detail__thumbnails">
-              {product.images.map((image) => (
-                <div className="product-detail__thumbnail" key={image.id}>
-                  <Image src={image.url} alt="" fill sizes="80px" />
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </div>
+        <ProductGallery images={product.images} name={product.name} />
 
         <div className="product-detail__info">
           <p className="product-card__category">{CATEGORY_LABELS[product.category]}</p>

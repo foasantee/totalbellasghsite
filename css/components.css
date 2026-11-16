@@ -451,21 +451,66 @@
   border-radius: var(--radius);
   overflow: hidden;
   background-color: var(--color-section-light);
+  /* Let the browser handle vertical scrolling; horizontal swipes are read
+     by the gallery's own touch handlers instead of triggering a back/forward
+     navigation gesture. */
+  touch-action: pan-y;
+}
+
+.product-detail__nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: var(--color-primary-dark);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.product-detail__nav-arrow:hover {
+  background-color: #fff;
+}
+
+.product-detail__nav-arrow--prev {
+  left: var(--space-xs);
+}
+
+.product-detail__nav-arrow--next {
+  right: var(--space-xs);
 }
 
 .product-detail__thumbnails {
   display: flex;
   gap: var(--space-xs);
   margin-top: var(--space-sm);
+  overflow-x: auto;
 }
 
 .product-detail__thumbnail {
   position: relative;
+  flex-shrink: 0;
   width: 64px;
   height: 64px;
   border-radius: var(--radius);
   overflow: hidden;
   background-color: var(--color-section-light);
+  padding: 0;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.product-detail__thumbnail--active {
+  border-color: var(--color-primary);
 }
 
 .product-detail__info h1 {
