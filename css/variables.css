@@ -33,7 +33,6 @@
   --fs-h3: clamp(1.1rem, 1vw + 0.8rem, 1.35rem);
   --fs-body: 1rem;
   --fs-small: 0.875rem;
-  --fs-brand-name: clamp(1rem, 0.85rem + 0.6vw, 1.75rem);
 
   /* Spacing scale */
   --space-2xs: 0.5rem;
