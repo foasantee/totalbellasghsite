@@ -12,7 +12,9 @@ export function toCardData(product: ProductWithImages): ProductCardData {
     price: product.price.toString(),
     category: product.category,
     badge: product.badge,
-    imageUrl: product.images[0]?.url ?? null,
+    // A card thumbnail is rendered with next/image, which can't play a
+    // video — always prefer an actual photo, even if a video is first.
+    imageUrl: product.images.find((image) => image.type === "IMAGE")?.url ?? null,
   };
 }
 

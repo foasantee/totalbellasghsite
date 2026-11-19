@@ -28,11 +28,20 @@ async function uniqueSlug(name: string, excludeId?: string): Promise<string> {
   return candidate;
 }
 
-function parseImages(formData: FormData): string[] {
+// Each entry is submitted as "<TYPE>|<url>" (see ImageUploader) so the media
+// kind travels with its URL through a single repeated hidden input, rather
+// than needing two parallel arrays that could drift out of sync.
+function parseImages(formData: FormData): { url: string; type: "IMAGE" | "VIDEO" }[] {
   return formData
     .getAll("images")
     .map((value) => String(value))
-    .filter(Boolean);
+    .filter(Boolean)
+    .map((entry) => {
+      const separatorIndex = entry.indexOf("|");
+      if (separatorIndex === -1) return { url: entry, type: "IMAGE" as const };
+      const type = entry.slice(0, separatorIndex) === "VIDEO" ? ("VIDEO" as const) : ("IMAGE" as const);
+      return { url: entry.slice(separatorIndex + 1), type };
+    });
 }
 
 // Each size has its own input, named `size_<SIZE>`. A blank input means
@@ -97,7 +106,7 @@ export async function createProduct(
         : data.quantity,
       badge: data.badge || null,
       images: {
-        create: data.images.map((url, position) => ({ url, position })),
+        create: data.images.map((item, position) => ({ url: item.url, type: item.type, position })),
       },
       sizes: {
         create: data.sizes,
@@ -153,7 +162,7 @@ export async function updateProduct(
           : data.quantity,
         badge: data.badge || null,
         images: {
-          create: data.images.map((url, position) => ({ url, position })),
+          create: data.images.map((item, position) => ({ url: item.url, type: item.type, position })),
         },
         sizes: {
           create: data.sizes,

@@ -3,7 +3,12 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-type PendingImage = { url: string; uploading: boolean };
+type MediaType = "IMAGE" | "VIDEO";
+type PendingImage = { url: string; uploading: boolean; type: MediaType };
+
+// Keep in sync with MAX_VIDEO_BYTES in app/api/uploads/presign/route.ts —
+// checked here first so an oversized clip is rejected before it's uploaded.
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 
 // Uploads via XMLHttpRequest rather than fetch(). Safari (especially on
 // iOS) has a long-standing bug where fetch() with a File/Blob body throws
@@ -28,25 +33,40 @@ function uploadToStorage(url: string, file: File): Promise<void> {
   });
 }
 
-export function ImageUploader({ initialImages = [] }: { initialImages?: string[] }) {
+export function ImageUploader({
+  initialImages = [],
+}: {
+  initialImages?: { url: string; type: MediaType }[];
+}) {
   const [images, setImages] = useState<PendingImage[]>(
-    initialImages.map((url) => ({ url, uploading: false }))
+    initialImages.map((item) => ({ ...item, uploading: false }))
   );
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   async function uploadFile(file: File) {
     setError(null);
-    const placeholder: PendingImage = { url: URL.createObjectURL(file), uploading: true };
+    const isVideo = file.type.startsWith("video/");
+
+    if (isVideo && file.size > MAX_VIDEO_BYTES) {
+      setError(`"${file.name}" is too large — please trim or compress it below ${MAX_VIDEO_BYTES / (1024 * 1024)}MB.`);
+      return;
+    }
+
+    const type: MediaType = isVideo ? "VIDEO" : "IMAGE";
+    const placeholder: PendingImage = { url: URL.createObjectURL(file), uploading: true, type };
     setImages((prev) => [...prev, placeholder]);
 
     try {
       const presignResponse = await fetch("/api/uploads/presign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+        body: JSON.stringify({ filename: file.name, contentType: file.type, size: file.size }),
       });
-      if (!presignResponse.ok) throw new Error("Could not get an upload URL.");
+      if (!presignResponse.ok) {
+        const body = await presignResponse.json().catch(() => null);
+        throw new Error(body?.error || "Could not get an upload URL.");
+      }
       const { uploadUrl, publicUrl } = await presignResponse.json();
 
       // The presigned URL embeds x-amz-acl=public-read as a signed query
@@ -56,7 +76,9 @@ export function ImageUploader({ initialImages = [] }: { initialImages?: string[]
       await uploadToStorage(uploadUrl, file);
 
       setImages((prev) =>
-        prev.map((img) => (img.url === placeholder.url ? { url: publicUrl, uploading: false } : img))
+        prev.map((img) =>
+          img.url === placeholder.url ? { url: publicUrl, uploading: false, type } : img
+        )
       );
     } catch (err) {
       setImages((prev) => prev.filter((img) => img.url !== placeholder.url));
@@ -86,13 +108,13 @@ export function ImageUploader({ initialImages = [] }: { initialImages?: string[]
   return (
     <div className="image-uploader">
       <label className="image-uploader__dropzone" htmlFor="image-upload-input">
-        Click to add photos (the first photo is used as the product&apos;s main image)
+        Click to add photos or videos (the first item is used as the product&apos;s main image)
       </label>
       <input
         ref={fileInputRef}
         id="image-upload-input"
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         multiple
         onChange={(event) => {
           handleFiles(event.target.files);
@@ -105,7 +127,7 @@ export function ImageUploader({ initialImages = [] }: { initialImages?: string[]
         className="btn btn-secondary"
         onClick={() => fileInputRef.current?.click()}
       >
-        Add Photos
+        Add Photos / Videos
       </button>
 
       {error ? <p className="form-field__error">{error}</p> : null}
@@ -114,14 +136,24 @@ export function ImageUploader({ initialImages = [] }: { initialImages?: string[]
         {images.map((image, index) => (
           <div className="image-uploader__thumb" key={image.url}>
             <div className="image-uploader__thumb-image">
-              <Image src={image.url} alt="" fill sizes="120px" unoptimized={image.uploading} />
+              {image.type === "VIDEO" ? (
+                <video
+                  className="image-uploader__thumb-video"
+                  src={image.url}
+                  muted
+                  playsInline
+                  preload="metadata"
+                />
+              ) : (
+                <Image src={image.url} alt="" fill sizes="120px" unoptimized={image.uploading} />
+              )}
             </div>
             {image.uploading ? (
               <span className="image-uploader__status">Uploading…</span>
             ) : (
               <>
                 {!image.uploading && (
-                  <input type="hidden" name="images" value={image.url} />
+                  <input type="hidden" name="images" value={`${image.type}|${image.url}`} />
                 )}
                 <div className="image-uploader__thumb-actions">
                   <button type="button" onClick={() => moveImage(index, -1)} aria-label="Move earlier">

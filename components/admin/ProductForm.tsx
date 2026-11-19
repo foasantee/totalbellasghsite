@@ -29,7 +29,7 @@ export function ProductForm({
     subcategory: ClothingSubcategory | null;
     quantity: number;
     badge: string | null;
-    images: string[];
+    images: { url: string; type: "IMAGE" | "VIDEO" }[];
     sizes: { size: Size; quantity: number }[];
   };
 }) {

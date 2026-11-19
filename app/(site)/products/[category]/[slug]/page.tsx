@@ -29,7 +29,9 @@ export default async function ProductDetailPage({ params }: Props) {
   const product = await loadProduct(categorySlug, slug);
   if (!product) notFound();
 
-  const primaryImage = product.images[0]?.url ?? null;
+  // Cart thumbnails are rendered with next/image, which can't play a video —
+  // always use an actual photo here, even when a video leads the gallery.
+  const primaryImage = product.images.find((image) => image.type === "IMAGE")?.url ?? null;
   const sizeOptions =
     product.sizes.length > 0
       // Which sizes exist is already fully determined by the size rows

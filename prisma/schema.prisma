@@ -106,14 +106,20 @@ model ProductSize {
 }
 
 model ProductImage {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
-  position  Int      @default(0)
-  createdAt DateTime @default(now())
+  type      MediaType @default(IMAGE)
+  position  Int       @default(0)
+  createdAt DateTime  @default(now())
 
   @@index([productId])
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
 }
 
 model Order {

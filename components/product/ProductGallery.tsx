@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import type { TouchEvent } from "react";
 import Image from "next/image";
 
-export type GalleryImage = { id: string; url: string };
+export type GalleryImage = { id: string; url: string; type: "IMAGE" | "VIDEO" };
 
 // Anything shorter than this is treated as a tap/scroll, not a swipe.
 const SWIPE_THRESHOLD_PX = 40;
@@ -43,21 +43,31 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
         onTouchStart={hasMultiple ? handleTouchStart : undefined}
         onTouchEnd={hasMultiple ? handleTouchEnd : undefined}
       >
-        <Image
-          key={images[activeIndex].id}
-          src={images[activeIndex].url}
-          alt={name}
-          fill
-          sizes="(min-width: 992px) 50vw, 100vw"
-          priority
-        />
+        {images[activeIndex].type === "VIDEO" ? (
+          <video
+            key={images[activeIndex].id}
+            className="product-detail__main-video"
+            src={images[activeIndex].url}
+            controls
+            playsInline
+          />
+        ) : (
+          <Image
+            key={images[activeIndex].id}
+            src={images[activeIndex].url}
+            alt={name}
+            fill
+            sizes="(min-width: 992px) 50vw, 100vw"
+            priority
+          />
+        )}
         {hasMultiple ? (
           <>
             <button
               type="button"
               className="product-detail__nav-arrow product-detail__nav-arrow--prev"
               onClick={goPrev}
-              aria-label="Previous photo"
+              aria-label="Previous"
             >
               ‹
             </button>
@@ -65,7 +75,7 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
               type="button"
               className="product-detail__nav-arrow product-detail__nav-arrow--next"
               onClick={goNext}
-              aria-label="Next photo"
+              aria-label="Next"
             >
               ›
             </button>
@@ -74,20 +84,27 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
       </div>
 
       {hasMultiple ? (
-        <div className="product-detail__thumbnails" role="tablist" aria-label="Product photos">
+        <div className="product-detail__thumbnails" role="tablist" aria-label="Product photos and videos">
           {images.map((image, index) => (
             <button
               type="button"
               key={image.id}
               role="tab"
               aria-selected={index === activeIndex}
-              aria-label={`Photo ${index + 1}`}
+              aria-label={`${image.type === "VIDEO" ? "Video" : "Photo"} ${index + 1}`}
               className={`product-detail__thumbnail${
                 index === activeIndex ? " product-detail__thumbnail--active" : ""
               }`}
               onClick={() => goTo(index)}
             >
-              <Image src={image.url} alt="" fill sizes="80px" />
+              {image.type === "VIDEO" ? (
+                <>
+                  <video className="product-detail__thumbnail-video" src={image.url} muted playsInline preload="metadata" />
+                  <span className="product-detail__thumbnail-play" aria-hidden="true" />
+                </>
+              ) : (
+                <Image src={image.url} alt="" fill sizes="80px" />
+              )}
             </button>
           ))}
         </div>

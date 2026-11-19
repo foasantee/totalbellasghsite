@@ -85,6 +85,11 @@ const imageRefSchema = z
     { message: "Invalid image." }
   );
 
+export const productMediaItemSchema = z.object({
+  url: imageRefSchema,
+  type: z.enum(["IMAGE", "VIDEO"]),
+});
+
 const SUBCATEGORY_VALUES = [
   "BLOUSE",
   "T_SHIRT",
@@ -107,7 +112,7 @@ export const productFormSchema = z.object({
   subcategory: z.enum(SUBCATEGORY_VALUES).optional().or(z.literal("")),
   quantity: z.coerce.number().int().min(0, "Quantity cannot be negative."),
   badge: z.string().trim().optional().or(z.literal("")),
-  images: z.array(imageRefSchema).default([]),
+  images: z.array(productMediaItemSchema).default([]),
   // Only meaningful for CLOTHING. Empty array = this product isn't using
   // per-size stock — the plain `quantity` field above stays authoritative.
   sizes: z.array(productSizeInputSchema).default([]),
